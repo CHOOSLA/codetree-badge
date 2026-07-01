@@ -14,14 +14,16 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import cards
-import client
-import normalize as norm
 
 RESULT = Path(__file__).resolve().parent.parent / "result"
 SAMPLE = Path(__file__).resolve().parent / "sample_meta.json"
 
 
 def fetch_meta() -> dict:
+    # --sample 경로에서는 httpx 가 필요 없으므로 여기서 지연 임포트한다.
+    import client
+    import normalize as norm
+
     jwt = client.login()
     return norm.normalize(
         client.fetch_progress(jwt),
