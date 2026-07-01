@@ -1,0 +1,32 @@
+{
+  "profile": {"username": "your-codetree-id"},
+  "summary": {
+    "solved": 124, "total": 1437,
+    "solved_by_type": {"Introduction": 44, "Problem": 69, "Test": 11},
+    "total_by_type": {"Introduction": 405, "Problem": 810, "Test": 222}
+  },
+  "courses": [
+    {"name": "Introduction to Coding", "alias": "codetree-101", "order": 0, "solved": 36, "total": 103},
+    {"name": "Foundations of Coding", "alias": "novice-low", "order": 1, "solved": 0, "total": 396},
+    {"name": "Algorithmic Foundations", "alias": "novice-mid", "order": 2, "solved": 88, "total": 241},
+    {"name": "Data Structures Fundamentals", "alias": "novice-high", "order": 3, "solved": 0, "total": 242},
+    {"name": "Practical Algorithm Design", "alias": "intermediate-low", "order": 4, "solved": 0, "total": 130},
+    {"name": "Advanced Algorithms I", "alias": "intermediate-mid", "order": 5, "solved": 0, "total": 176},
+    {"name": "Advanced Algorithms II", "alias": "intermediate-high", "order": 6, "solved": 0, "total": 149}
+  ],
+  "streak": {
+    "current": 7,
+    "history": [
+      {"gained_at": "2026-06-28", "exp": 150, "goal": 140},
+      {"gained_at": "2026-06-27", "exp": 70, "goal": 140},
+      {"gained_at": "2026-06-26", "exp": 230, "goal": 140},
+      {"gained_at": "2026-06-25", "exp": 150, "goal": 140},
+      {"gained_at": "2026-06-24", "exp": 150, "goal": 140},
+      {"gained_at": "2026-06-23", "exp": 490, "goal": 140},
+      {"gained_at": "2026-06-22", "exp": 60, "goal": 140},
+      {"gained_at": "2026-06-21", "exp": 0, "goal": 140},
+      {"gained_at": "2026-06-20", "exp": 20, "goal": 140},
+      {"gained_at": "2026-06-19", "exp": 440, "goal": 140}
+    ]
+  }
+}
