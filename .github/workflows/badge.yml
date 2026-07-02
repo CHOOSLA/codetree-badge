@@ -1,0 +1,52 @@
+name: 뱃지 갱신
+
+on:
+  schedule:
+    - cron: "0 * * * *"   # 매시 정각 (fork 에서는 Actions 탭에서 워크플로 활성화 필요)
+  workflow_dispatch: {}    # 수동 실행 버튼
+  repository_dispatch:     # 풀이 저장소 등 외부에서 즉시 갱신 트리거
+    types: [refresh-badge]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: badge
+  cancel-in-progress: true
+
+jobs:
+  badge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install httpx
+
+      - name: 뱃지 생성
+        env:
+          CODETREE_ID: ${{ secrets.CODETREE_ID }}
+          CODETREE_PW: ${{ secrets.CODETREE_PW }}
+          CODETREE_DEVICE_INFO: ${{ secrets.CODETREE_DEVICE_INFO }}
+        run: python src/generate.py
+
+      - name: 결과 커밋
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add result
+          if git diff --cached --quiet; then
+            echo "변경 없음"
+            exit 0
+          fi
+          # 직전 커밋도 뱃지 갱신이면 amend 로 합쳐 히스토리를 1개로 유지
+          if git log -1 --pretty=%s | grep -q "^chore(badge)"; then
+            git commit --amend --no-edit
+            git push --force-with-lease
+          else
+            git commit -m "chore(badge): 뱃지 갱신"
+            git push
+          fi
