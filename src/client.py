@@ -2,7 +2,7 @@ import os
 
 import httpx
 
-API_BASE = "https://api.codetree.ai"
+API_BASE = "https://api-prod.codetree.ai"
 SIGNIN_PATH = "/api/v2/api-token-auth/"
 
 
