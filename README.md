@@ -202,17 +202,58 @@ https://raw.githubusercontent.com/{username}/codetree-badge/main/result/summary.
 
 ## 즉시 갱신 (선택)
 
-매시간 갱신 외에, 문제를 푼 직후 바로 반영하고 싶다면 풀이 저장소의 워크플로에서 `repository_dispatch` 를 쏘면 됩니다. `repo, workflow` 권한이 있는 PAT 이 필요합니다.
+기본 동작만으로도 뱃지는 매시간 갱신됩니다. 이 단계는 "문제를 푼 직후 1시간을 기다리지 않고 바로 반영하고 싶은" 경우를 위한 선택 사항입니다.
+
+아이디어는 간단합니다. 알고리즘 풀이 저장소에 커밋을 push 하는 순간, 그 저장소의 워크플로가 뱃지 저장소에 `repository_dispatch` 이벤트를 쏘고, 뱃지 저장소의 워크플로(`refresh-badge` 타입을 구독 중)가 즉시 깨어나 카드를 다시 그리는 구조입니다.
+
+```
+풀이 저장소 push → repository_dispatch → codetree-badge 워크플로 실행 → result/ 갱신
+```
+
+### 1. PAT 발급
+
+다른 저장소의 워크플로를 깨우려면 기본 `GITHUB_TOKEN` 으로는 안 되고, 본인 계정의 Personal Access Token 이 필요합니다.
+
+- **Fine-grained token** (권장): GitHub **Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token**. Repository access 를 `codetree-badge` 하나로 제한하고, Permissions 에서 **Contents: Read and write** 를 부여합니다.
+- **Classic token**: scope 에서 `repo` 를 체크합니다. 권한 범위가 넓어지므로 fine-grained 쪽을 권합니다.
+
+만료 기간은 원하는 만큼(예: 1년) 설정하고, 생성된 토큰 문자열을 복사해 둡니다. 이 화면을 벗어나면 다시 볼 수 없습니다.
+
+### 2. 풀이 저장소에 Secret 등록
+
+토큰은 뱃지 저장소가 아니라 **dispatch 를 쏘는 쪽(풀이 저장소)** 의 Secrets 에 넣습니다. 풀이 저장소의 **Settings → Secrets and variables → Actions** 에서 `BADGE_PAT` 이라는 이름으로 등록합니다.
+
+### 3. 풀이 저장소 워크플로에 스텝 추가
+
+풀이 저장소에 워크플로가 없다면 `.github/workflows/badge-ping.yml` 로 아래 전체를 만들고, 이미 있다면 마지막 스텝만 붙입니다. `{username}` 은 본인 GitHub 아이디로 바꿉니다.
 
 ```yaml
-- name: 뱃지 즉시 갱신
-  run: |
-    curl -fsS -X POST \
-      -H "Authorization: Bearer ${{ secrets.BADGE_PAT }}" \
-      -H "Accept: application/vnd.github+json" \
-      https://api.github.com/repos/{username}/codetree-badge/dispatches \
-      -d '{"event_type":"refresh-badge"}'
+name: 뱃지 즉시 갱신
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 뱃지 저장소 워크플로 깨우기
+        run: |
+          curl -fsS -X POST \
+            -H "Authorization: Bearer ${{ secrets.BADGE_PAT }}" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/{username}/codetree-badge/dispatches \
+            -d '{"event_type":"refresh-badge"}'
 ```
+
+`event_type` 의 `refresh-badge` 는 뱃지 저장소 워크플로의 `repository_dispatch.types` 와 맞춰둔 값이므로 바꾸지 않습니다.
+
+### 4. 확인
+
+풀이 저장소에 아무 커밋이나 push 한 뒤, 뱃지 저장소의 **Actions 탭**에 `repository_dispatch` 로 시작된 "뱃지 갱신" 실행이 새로 잡히면 성공입니다. 실행이 안 잡힌다면 PAT 권한(Contents write)과 `{username}` 경로 오타부터 확인해 보세요.
+
+참고로 이 즉시 갱신은 코드트리 데이터를 다시 가져오는 것이므로, README 화면에 보이기까지는 GitHub 이미지 캐시(camo) 시간만큼의 지연이 있을 수 있습니다.
 
 ## 업데이트 받기 (Sync fork)
 
