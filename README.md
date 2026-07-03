@@ -5,10 +5,10 @@
 코드트리(Codetree)의 학습 진도를 SVG 뱃지로 만들어 GitHub 프로필이나 저장소 README 에 붙일 수 있게 해주는 프로젝트입니다. 이 저장소를 fork 하고 본인의 코드트리 계정 정보를 Secrets 에 등록하면, GitHub Actions 가 매시간 진도를 가져와 `result/` 아래의 SVG 를 갱신합니다. 별도의 서버 없이 fork 하나가 곧 나만의 뱃지 인스턴스가 됩니다.
 
 <p align="center">
-  <img src="./result/summary.svg" alt="summary"/>
+  <img src="./docs/preview/summary.svg" alt="summary"/>
 </p>
 <p align="center">
-  <img src="./result/streak.svg" alt="streak"/>
+  <img src="./docs/preview/streak.svg" alt="streak"/>
 </p>
 
 ## 동작 방식
@@ -72,46 +72,48 @@ https://raw.githubusercontent.com/{username}/codetree-badge/main/result/summary.
 
 #### `summary.svg` — 학습 현황 요약
 
-<p align="center"><img src="./result/summary.svg" alt="summary"/></p>
+<p align="center"><img src="./docs/preview/summary.svg" alt="summary"/></p>
 
 프로필 맨 위에 두기 좋은 대표 카드입니다. 왼쪽 링은 코드트리 전체 커리큘럼 대비 완료율이고, 오른쪽에는 계정 이름과 함께 푼 문제 수(`124 / 1437 solved`)가 큰 숫자로 표시됩니다. 그 아래 가로 바는 같은 완료율을 한 번 더 시각화한 전체 진척 바이며, 맨 아래 줄은 푼 문제를 Problem(실전 문제) · Test(테스트) · Intro(개념 학습) 유형별로 나눈 개수입니다.
 
 #### `streak.svg` — 연속 학습 현황
 
-<p align="center"><img src="./result/streak.svg" alt="streak"/></p>
+<p align="center"><img src="./docs/preview/streak.svg" alt="streak"/></p>
 
-꾸준함을 보여주는 카드입니다. 왼쪽부터 **현재 연속**(오늘까지 며칠 연속으로 학습했는지), **목표 달성**(최근 며칠 중 일일 XP 목표를 채운 날), **획득 XP**(같은 기간 동안 모은 경험치 합) 세 숫자가 나란히 놓입니다. 하단의 점 줄은 하루가 한 칸이며, 일일 목표를 달성한 날만 청록색으로 켜집니다. 연속이 끊겨도 과거에 달성한 날은 그대로 남습니다.
+꾸준함을 보여주는 카드입니다. 왼쪽부터 **현재 연속**(오늘까지 며칠 연속으로 학습했는지), **최고 연속**(지금까지 가장 길었던 연속 기록), **총 학습일**(학습한 날의 총합) 세 숫자가 나란히 놓입니다. 하단의 점 줄은 최근 14일이 한 칸씩이며, 학습한 날만 청록색으로 켜집니다. 연속이 끊겨도 과거 기록은 그대로 남습니다.
+
+최고 연속과 총 학습일은 실행할 때마다 학습일을 `data/days.json` 에 누적해 계산합니다. 코드트리 API 가 최근 열흘치만 주기 때문에, 처음에는 최근 기록부터 시작해 시간이 지날수록 정확해집니다.
 
 #### `xp.svg` — 일별 획득 XP
 
-<p align="center"><img src="./result/xp.svg" alt="xp"/></p>
+<p align="center"><img src="./docs/preview/xp.svg" alt="xp"/></p>
 
 최근 열흘간 하루하루 얼마나 학습했는지를 막대로 보여줍니다. 주황 점선이 코드트리에서 설정한 일일 목표 XP 이고, 목표를 넘긴 날은 초록 막대, 못 넘긴 날은 회색 막대로 구분됩니다. 오늘(가장 오른쪽)은 청록 테두리로 강조되어 지금 목표까지 얼마나 남았는지 한눈에 보입니다.
 
 #### `types.svg` — 유형별 진행률
 
-<p align="center"><img src="./result/types.svg" alt="types"/></p>
+<p align="center"><img src="./docs/preview/types.svg" alt="types"/></p>
 
 커리큘럼을 문제 유형으로 쪼개 본 카드입니다. Problem(실전 문제 풀이) · Test(단원 테스트) · Introduction(개념 학습) 각각에 대해 `푼 수 / 전체 수 · 퍼센트` 와 진행률 바를 보여줍니다. 어떤 유형에 학습이 치우쳐 있는지 확인할 때 유용합니다.
 
 #### `ladder.svg` — 트레일 전체 사다리
 
-<p align="center"><img src="./result/ladder.svg" alt="ladder"/></p>
+<p align="center"><img src="./docs/preview/ladder.svg" alt="ladder"/></p>
 
 코드트리 트레일 7개 코스를 위(입문)부터 아래(실전)까지 사다리처럼 쌓아 보여줍니다. 코스마다 진행률 바와 `푼 수 / 전체 수 · 퍼센트` 가 붙고, 지금 진행 중인 코스는 굵은 글씨와 ◀ 화살표로 표시됩니다. 전체 커리큘럼에서 내가 어디쯤 와 있는지 보여주는 로드맵 카드입니다.
 
 #### `course_0.svg` ~ `course_6.svg` — 트레일 단계별 미니 카드
 
 <p align="center">
-  <img src="./result/course_0.svg" alt="course 0"/>
-  <img src="./result/course_1.svg" alt="course 1"/>
-  <img src="./result/course_2.svg" alt="course 2"/>
-  <img src="./result/course_3.svg" alt="course 3"/>
+  <img src="./docs/preview/course_0.svg" alt="course 0"/>
+  <img src="./docs/preview/course_1.svg" alt="course 1"/>
+  <img src="./docs/preview/course_2.svg" alt="course 2"/>
+  <img src="./docs/preview/course_3.svg" alt="course 3"/>
 </p>
 <p align="center">
-  <img src="./result/course_4.svg" alt="course 4"/>
-  <img src="./result/course_5.svg" alt="course 5"/>
-  <img src="./result/course_6.svg" alt="course 6"/>
+  <img src="./docs/preview/course_4.svg" alt="course 4"/>
+  <img src="./docs/preview/course_5.svg" alt="course 5"/>
+  <img src="./docs/preview/course_6.svg" alt="course 6"/>
 </p>
 
 트레일 한 코스가 카드 한 장인 폭 118px 미니 카드입니다. 상단 색 띠와 `TRAIL n` 라벨로 단계를 구분하고, 가운데 링과 퍼센트가 해당 코스의 진행률, 하단이 코스 이름과 `푼 수 / 전체 수` 입니다. 색은 쉬운 단계(청록)에서 어려운 단계(핑크)로 흐르는 램프라서 나란히 붙이면 하나의 그라데이션처럼 보입니다. 7장을 다 붙여도 되고, 진행 중인 단계 몇 장만 골라 붙여도 됩니다.
@@ -209,6 +211,12 @@ https://raw.githubusercontent.com/{username}/codetree-badge/main/result/summary.
       https://api.github.com/repos/{username}/codetree-badge/dispatches \
       -d '{"event_type":"refresh-badge"}'
 ```
+
+## 업데이트 받기 (Sync fork)
+
+이 저장소에 카드 디자인이나 기능 개선이 올라오면, fork 페이지 상단의 **Sync fork → Update branch** 버튼 한 번으로 받아올 수 있습니다.
+
+충돌 걱정은 하지 않아도 됩니다. 원본 저장소는 `src/`, `docs/`, 워크플로만 수정하고, fork 의 봇은 `result/` 와 `data/` 만 수정하도록 경로를 분리해 두었기 때문에 두 변경이 겹치지 않습니다. 동기화해도 본인의 뱃지 데이터(`result/`, `data/days.json`)는 그대로 유지됩니다.
 
 ## 로컬 미리보기
 
