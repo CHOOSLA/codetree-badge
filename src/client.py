@@ -5,16 +5,18 @@ import httpx
 API_BASE = "https://api-prod.codetree.ai"
 SIGNIN_PATH = "/api/v2/api-token-auth/"
 
+# X-Device-Info 가 없거나 JSON 이 아니면 api-token-auth 가 403 을 준다.
+# 값 자체는 검증하지 않아서 형식만 맞으면 되므로 기본값을 내장한다.
+DEFAULT_DEVICE_INFO = '{"os":"linux","browser":"chrome"}'
+
 
 def _headers(jwt=None):
-    # X-Device-Info 가 없으면 api-token-auth 가 403("자격증명 미제공") 을 준다.
-    # 로그인된 브라우저의 요청 헤더에서 복사한 값을 그대로 쓰면 된다.
     h = {
         "Accept": "application/json",
         "Content-Type": "application/json",
         "Origin": "https://www.codetree.ai",
         "Referer": "https://www.codetree.ai/",
-        "X-Device-Info": os.environ.get("CODETREE_DEVICE_INFO", ""),
+        "X-Device-Info": os.environ.get("CODETREE_DEVICE_INFO") or DEFAULT_DEVICE_INFO,
         "X-TZ-Offset": "9",
     }
     if jwt:

@@ -27,7 +27,7 @@
 
 ### 2. Secrets 등록
 
-fork 한 저장소에서 **Settings → Secrets and variables → Actions → New repository secret** 으로 이동해 아래 세 가지를 등록합니다.
+fork 한 저장소에서 **Settings → Secrets and variables → Actions → New repository secret** 으로 이동해 아래 두 가지를 등록합니다.
 
 ![Secrets 등록 화면](./docs/02-secrets.png)
 
@@ -35,23 +35,20 @@ fork 한 저장소에서 **Settings → Secrets and variables → Actions → Ne
 | --- | --- |
 | `CODETREE_ID` | 코드트리 로그인 아이디(이메일) |
 | `CODETREE_PW` | 코드트리 비밀번호 |
-| `CODETREE_DEVICE_INFO` | 아래 방법으로 복사한 `X-Device-Info` 헤더 값 |
 
-`CODETREE_DEVICE_INFO` 는 코드트리 API 가 로그인 시 요구하는 헤더입니다. 브라우저에서 codetree.ai 에 로그인한 상태로 개발자 도구(F12)의 **Network 탭**을 열고, 페이지를 새로고침한 뒤 아무 API 요청(`api.codetree.ai` 로 가는 것)이나 클릭해 **Request Headers** 의 `X-Device-Info` 값을 그대로 복사하면 됩니다.
-
-![X-Device-Info 복사 위치](./docs/03-device-info.png)
+계정 정보는 fork 한 본인 저장소의 Secrets 에만 저장되며 코드나 커밋에 노출되지 않습니다.
 
 ### 3. Actions 활성화
 
 fork 된 저장소는 예약 실행(schedule)이 기본 비활성 상태입니다. **Actions 탭**에서 "I understand my workflows, go ahead and enable them" 을 눌러 활성화합니다.
 
-![Actions 활성화 화면](./docs/04-enable-actions.png)
+![Actions 활성화 화면](./docs/03-enable-actions.png)
 
 ### 4. 첫 실행
 
 **Actions → 뱃지 갱신 → Run workflow** 버튼으로 한 번 수동 실행합니다. 성공하면 `result/` 의 SVG 들이 본인 데이터로 바뀝니다.
 
-![Run workflow 버튼](./docs/05-run-workflow.png)
+![Run workflow 버튼](./docs/04-run-workflow.png)
 
 ## README 에 붙이기
 
