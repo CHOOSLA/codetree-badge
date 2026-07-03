@@ -1,5 +1,7 @@
 # codetree-badge
 
+> Codetree progress badge generator for GitHub profile README — 코드트리 뱃지 · 코드트리 잔디 · 깃허브 프로필 꾸미기
+
 코드트리(Codetree)의 학습 진도를 SVG 뱃지로 만들어 GitHub 프로필이나 저장소 README 에 붙일 수 있게 해주는 프로젝트입니다. 이 저장소를 fork 하고 본인의 코드트리 계정 정보를 Secrets 에 등록하면, GitHub Actions 가 매시간 진도를 가져와 `result/` 아래의 SVG 를 갱신합니다. 별도의 서버 없이 fork 하나가 곧 나만의 뱃지 인스턴스가 됩니다.
 
 <p align="center">
