@@ -39,7 +39,14 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add result data
           if git diff --cached --quiet; then
-            echo "변경 없음"
+            # 오래 변경이 없으면 keepalive 커밋으로 예약 실행 비활성(60일 무활동)을 막는다
+            last=$(git log -1 --format=%ct)
+            if [ $(( ($(date +%s) - last) / 86400 )) -ge 25 ]; then
+              git commit --allow-empty -m "chore(Actions): keepalive"
+              git push
+            else
+              echo "변경 없음"
+            fi
             exit 0
           fi
           # 직전 커밋도 뱃지 갱신이면 amend 로 합쳐 히스토리를 1개로 유지
