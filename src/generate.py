@@ -17,6 +17,27 @@ import cards
 
 RESULT = Path(__file__).resolve().parent.parent / "result"
 SAMPLE = Path(__file__).resolve().parent / "sample_meta.json"
+DAYS_FILE = Path(__file__).resolve().parent.parent / "data" / "days.json"
+
+
+def merge_days(meta: dict) -> None:
+    """학습일을 data/days.json 에 누적한다.
+
+    스트릭 API 의 history 는 최근 10일만 주기 때문에, 실행할 때마다
+    학습한 날짜를 파일에 합쳐 두어야 최고 연속·총 학습일을 계산할 수 있다.
+    """
+    days: set[str] = set()
+    try:
+        days.update(json.loads(DAYS_FILE.read_text(encoding="utf-8")))
+    except (OSError, ValueError):
+        pass
+    for d in meta.get("streak", {}).get("history", []):
+        if d.get("exp", 0) > 0 and d.get("gained_at"):
+            days.add(d["gained_at"])
+    merged = sorted(days)
+    DAYS_FILE.parent.mkdir(parents=True, exist_ok=True)
+    DAYS_FILE.write_text(json.dumps(merged), encoding="utf-8")
+    meta["streak"]["days"] = merged
 
 
 def fetch_meta() -> dict:
@@ -50,6 +71,7 @@ def main() -> int:
         print("샘플 메타로 렌더링 (자격증명 미사용)")
     else:
         meta = fetch_meta()
+        merge_days(meta)
         s = meta["summary"]
         print(f"메타 수신: {s['solved']}/{s['total']} solved, streak {meta['streak']['current']}")
 

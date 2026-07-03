@@ -1,3 +1,4 @@
+import datetime
 import html
 import math
 
@@ -106,12 +107,25 @@ def summary_card(m):
 
 
 def streak_card(m):
-    # 대칭 스탯 카드: 현재 연속 · 목표 달성일 · 획득 XP. 하단 점은 일별 목표 달성 여부.
-    cur = m.get("streak", {}).get("current", 0)
-    hist = list(reversed(m.get("streak", {}).get("history", [])))  # 오래된 → 최신
-    met_days = sum(1 for d in hist if d.get("exp", 0) >= d.get("goal", 1))
-    xp_sum = sum(d.get("exp", 0) for d in hist)
-    n = len(hist) or 1
+    # 대칭 스탯 카드: 현재 연속 · 최고 연속 · 총 학습일. 하단 점은 최근 14일 학습 여부.
+    # 최고/총은 누적 학습일(streak.days)로 계산한다. 누적이 없으면 history 로 대체.
+    st = m.get("streak", {})
+    cur = st.get("current", 0)
+    day_strs = st.get("days") or [
+        d.get("gained_at") for d in st.get("history", []) if d.get("exp", 0) > 0
+    ]
+    days = set()
+    for s in day_strs:
+        try:
+            days.add(datetime.date.fromisoformat(s))
+        except (TypeError, ValueError):
+            pass
+    best = run = 0
+    for d in sorted(days):
+        run = run + 1 if (d - datetime.timedelta(days=1)) in days else 1
+        best = max(best, run)
+    best = max(best, cur)
+    total = max(len(days), cur)
 
     defs = (
         '<linearGradient id="flame" x1="0" y1="0" x2="0" y2="1">'
@@ -123,7 +137,7 @@ def streak_card(m):
         'd="M12 0c2 4 6 5 6 10a6 6 0 1 1-12 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-2-4 0-9z"/>'
     )
 
-    cols = [(cur, "현재 연속", CYAN), (f"{met_days}/{n}", "목표 달성", TEXT), (xp_sum, "획득 XP", TEXT)]
+    cols = [(cur, "현재 연속", CYAN), (best, "최고 연속", TEXT), (total, "총 학습일", TEXT)]
     body = flame
     for (val, label, color), x in zip(cols, (105, 230, 355)):  # 460 폭 대칭 3분할
         body += (
@@ -131,13 +145,19 @@ def streak_card(m):
             f'<text x="{x}" y="109" text-anchor="middle" font-size="11.5" font-weight="600" fill="{MUTED}">{label}</text>'
         )
 
-    dot, gap = 11, 5
+    # 최근 14일 학습 여부 점
+    n, dot, gap = 14, 11, 5
     sx = (460 - (n * dot + (n - 1) * gap)) / 2
     dy = 128
-    for i, d in enumerate(hist):
-        met = d.get("exp", 0) >= d.get("goal", 1)
-        body += f'<rect x="{sx + i*(dot+gap):.1f}" y="{dy}" width="{dot}" height="{dot}" rx="3" fill="{CYAN if met else TRACK}"/>'
-    body += f'<text x="230" y="{dy+27}" text-anchor="middle" font-size="9.5" fill="{MUTED}">최근 {n}일 · 목표 달성 {met_days}일</text>'
+    today = datetime.date.today()
+    recent = 0
+    for i in range(n):
+        day = today - datetime.timedelta(days=n - 1 - i)
+        on = day in days
+        if on:
+            recent += 1
+        body += f'<rect x="{sx + i*(dot+gap):.1f}" y="{dy}" width="{dot}" height="{dot}" rx="3" fill="{CYAN if on else TRACK}"/>'
+    body += f'<text x="230" y="{dy+27}" text-anchor="middle" font-size="9.5" fill="{MUTED}">최근 {n}일 · {recent}일 학습</text>'
     return _frame(460, 168, body, title="STREAK", extra_defs=defs)
 
 
