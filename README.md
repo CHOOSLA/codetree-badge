@@ -5,11 +5,13 @@
 코드트리(Codetree)의 학습 진도를 SVG 뱃지로 만들어 GitHub 프로필이나 저장소 README 에 붙일 수 있게 해주는 프로젝트입니다. 이 저장소를 fork 하고 본인의 코드트리 계정 정보를 Secrets 에 등록하면, GitHub Actions 가 매시간 진도를 가져와 `result/` 아래의 SVG 를 갱신합니다. 별도의 서버 없이 fork 하나가 곧 나만의 뱃지 인스턴스가 됩니다.
 
 <p align="center">
-  <img src="./docs/preview/summary.svg" alt="summary"/>
+  <img src="./result/summary.svg" alt="summary"/>
 </p>
 <p align="center">
-  <img src="./docs/preview/streak.svg" alt="streak"/>
+  <img src="./result/streak.svg" alt="streak"/>
 </p>
+
+위 카드는 이 저장소의 `result/` 를 그대로 보여줍니다. fork 해서 설정을 마치면 여러분의 README 에서는 같은 자리에 본인의 실제 진도가 매시간 갱신되어 표시됩니다. (원본 저장소에서는 샘플 데이터입니다.)
 
 ## 동작 방식
 
