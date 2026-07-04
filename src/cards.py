@@ -174,7 +174,8 @@ def ladder_card(m):
         pct = _pct(c["solved"], c["total"])
         color = COURSE_RAMP[i % len(COURSE_RAMP)]
         is_cur = c["alias"] == cur_alias
-        label = c["name"]
+        # 미니 카드와 동일하게 한글 트레일명을 우선 사용 (매핑에 없으면 API name)
+        label = COURSE_LABEL.get(c.get("alias"), (None, None))[0] or c["name"]
         if len(label) > 24:
             label = label[:23] + "…"
         mark = f'<tspan fill="{CYAN}" font-weight="700"> ◀</tspan>' if is_cur else ""
